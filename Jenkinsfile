@@ -21,12 +21,12 @@ pipeline {
         stage('Build Image') {
             steps {
                 script {
-                    COMMIT_HASH = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+                    def COMMIT_HASH = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
 
                     if (env.BRANCH_NAME == "dev") {
-                        IMAGE_TAG = "${DEV_REPO}:${COMMIT_HASH}"
+                        def IMAGE_TAG = "${DEV_REPO}:${COMMIT_HASH}"
                     } else if (env.BRANCH_NAME == "main") {
-                        IMAGE_TAG = "${PROD_REPO}:${COMMIT_HASH}"
+                        def IMAGE_TAG = "${PROD_REPO}:${COMMIT_HASH}"
                     } else {
                         error("This pipeline only runs for dev or main branches")
                     }
