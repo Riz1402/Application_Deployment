@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-COMPOSE_FILE="docker-compose.yml"
+IMAGE_TAG=$1   # get value from Jenkins argument
+export IMAGE_TAG
 
-echo "Deploying application using Docker Compose..."
-docker-compose -f $COMPOSE_FILE up -d
+echo "Deploying container with image: $IMAGE_TAG"
 
-echo "Application deployed successfully"
+docker-compose up -d

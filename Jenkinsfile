@@ -5,6 +5,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = "dockerhub"
         DEV_REPO = "rizz1402/dev"
         PROD_REPO = "rizz1402/prod"
+        IMAGE_TAG = ""   // will be set dynamically
     }
 
     triggers {
@@ -24,9 +25,9 @@ pipeline {
                     def COMMIT_HASH = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
 
                     if (env.BRANCH_NAME == "dev") {
-                        def IMAGE_TAG = "${DEV_REPO}:${COMMIT_HASH}"
+                        env.IMAGE_TAG = "${env.DEV_REPO}:${COMMIT_HASH}"
                     } else if (env.BRANCH_NAME == "main") {
-                        def IMAGE_TAG = "${PROD_REPO}:${COMMIT_HASH}"
+                        env.IMAGE_TAG = "${env.PROD_REPO}:${COMMIT_HASH}"
                     } else {
                         error("This pipeline only runs for dev or main branches")
                     }
@@ -43,7 +44,7 @@ pipeline {
                 script {
                     sh """
                         echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin
-                        docker tag App_Deployment:latest ${IMAGE_TAG}
+                        docker tag app_deployment:latest ${IMAGE_TAG}
                         docker push ${IMAGE_TAG}
                     """
                 }
@@ -60,7 +61,7 @@ pipeline {
             steps {
                 // Run deploy.sh
                 sh 'chmod +x deploy.sh'
-                sh "./deploy.sh"
+                sh "./deploy.sh ${IMAGE_TAG}"
             }
         }
     }

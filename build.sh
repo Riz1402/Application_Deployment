@@ -4,7 +4,7 @@
 set -e
 
 # Variables
-IMAGE_NAME="App_Deployment"
+IMAGE_NAME="app_deployment"
 IMAGE_TAG="latest"
 
 echo "Building Docker image: ${IMAGE_NAME}:${IMAGE_TAG}"
