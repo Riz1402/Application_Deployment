@@ -33,6 +33,7 @@ pipeline {
                 }
 
                 // Run build.sh
+                sh 'chmod +x build.sh'
                 sh "./build.sh"
             }
         }
@@ -58,6 +59,7 @@ pipeline {
             }
             steps {
                 // Run deploy.sh
+                sh 'chmod +x deploy.sh'
                 sh "./deploy.sh"
             }
         }
