@@ -5,11 +5,10 @@ pipeline {
         DOCKERHUB_CREDENTIALS = "dockerhub"
         DEV_REPO = "rizz1402/dev"
         PROD_REPO = "rizz1402/prod"
-        IMAGE_TAG = ""   // will be set dynamically
     }
 
     triggers {
-        githubPush()   // Auto trigger when code is pushed to GitHub
+        githubPush()
     }
 
     stages {
@@ -31,27 +30,28 @@ pipeline {
                     } else {
                         error("This pipeline only runs for dev or main branches")
                     }
+
+                    echo "IMAGE_TAG is set to ${env.IMAGE_TAG}"
                 }
 
-                // Run build.sh
                 sh 'chmod +x build.sh'
                 sh "./build.sh"
             }
         }
 
         stage('Docker Login & Push') {
-    steps {
-        script {
-            withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                sh """
-                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                    docker tag app_deployment:latest ${IMAGE_TAG}
-                    docker push ${IMAGE_TAG}
-                """
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh """
+                            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                            docker tag app_deployment:latest ${env.IMAGE_TAG}
+                            docker push ${env.IMAGE_TAG}
+                        """
+                    }
+                }
             }
         }
-    }
-}
 
         stage('Deploy') {
             when {
@@ -61,9 +61,8 @@ pipeline {
                 }
             }
             steps {
-                // Run deploy.sh
                 sh 'chmod +x deploy.sh'
-                sh "./deploy.sh ${IMAGE_TAG}"
+                sh "./deploy.sh ${env.IMAGE_TAG}"
             }
         }
     }
