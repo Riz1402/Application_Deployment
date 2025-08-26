@@ -40,16 +40,18 @@ pipeline {
         }
 
         stage('Docker Login & Push') {
-            steps {
-                script {
-                    sh """
-                        echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin
-                        docker tag app_deployment:latest ${IMAGE_TAG}
-                        docker push ${IMAGE_TAG}
-                    """
-                }
+    steps {
+        script {
+            withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                sh """
+                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    docker tag app_deployment:latest ${IMAGE_TAG}
+                    docker push ${IMAGE_TAG}
+                """
             }
         }
+    }
+}
 
         stage('Deploy') {
             when {
