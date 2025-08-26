@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = "dockerhub"
-        DEV_Branch = "rizz1402/dev"
-        PROD_Branch = "rizz1402/prod"
+        DEV_BRANCH = "rizz1402/dev"
+        PROD_BRANCH = "rizz1402/prod"
     }
 
     triggers {
@@ -24,9 +24,9 @@ pipeline {
                     def COMMIT_HASH = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
 
                     if (env.BRANCH_NAME == "dev") {
-                        env.IMAGE_TAG = "${env.DEV_Branch}:${COMMIT_HASH}"
+                        env.IMAGE_TAG = "${env.DEV_BRANCH}:${COMMIT_HASH}"
                     } else if (env.BRANCH_NAME == "main") {
-                        env.IMAGE_TAG = "${env.PROD_Branch}:${COMMIT_HASH}"
+                        env.IMAGE_TAG = "${env.PROD_BRANCH}:${COMMIT_HASH}"
                     } else {
                         error("This pipeline only runs for dev or main branches")
                     }
