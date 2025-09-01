@@ -1,0 +1,15 @@
+global:
+  smtp_smarthost: 'smtp.gmail.com:587'
+  smtp_from: 'rizz1402@gmail.com'
+  smtp_auth_username: 'rizz1402@gmail.com'
+  smtp_auth_password: 'app password'
+  smtp_require_tls: true
+
+route:
+  receiver: 'email-alert'
+
+receivers:
+  - name: 'email-alert'
+    email_configs:
+      - to: 'ra953c@gmail.com'
+        send_resolved: true
